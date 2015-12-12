@@ -6,10 +6,10 @@ ODIR =$(shell pwd)/src
 
 LIBS=-lsfml-graphics -lsfml-window -lsfml-network -lsfml-system -ltgui -static
 
-_DEPS =
+_DEPS = director.h game.h scene.h textureLoader.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = main.o
+_OBJ = main.o director.o game.o scene.o textureLoader.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 $(ODIR)/%.o: %.cpp $(DEPS)
