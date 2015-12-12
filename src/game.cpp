@@ -18,6 +18,7 @@ void Game::setupScene(sf::RenderWindow *window) {
 }
 
 void Game::draw(sf::RenderWindow *window) {
+    window->draw(a);
 }
 
 void Game::handleEvent(sf::Event event, sf::RenderWindow *window) {

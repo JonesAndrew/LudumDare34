@@ -10,10 +10,12 @@
 #define __Ludum_Dare__Game__
 
 #include "scene.h"
+#include "actor.h"
 #include <TGUI/TGUI.hpp>
 #include <SFML/Network.hpp>
 
 class Game : public Scene {
+    Actor a;
 public:
     virtual void draw(sf::RenderWindow *window);
     virtual void setupScene(sf::RenderWindow *window);

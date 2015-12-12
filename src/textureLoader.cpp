@@ -29,6 +29,7 @@ sf::Sprite TextureLoader::getSprite(std::string file) {
         tex = new Texture();
 #ifdef _WIN32
         tex->tex.loadFromFile("../res/"+file);
+        std::cout<<"../res/"+file<<"\n";
 #else
         tex->tex.loadFromFile(resourcePath()+file);
 #endif
