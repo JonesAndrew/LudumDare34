@@ -1,6 +1,9 @@
 #ifndef FPS_HPP
 #define FPS_HPP
 
+#include <iostream>
+#include <SFML/Graphics.hpp>
+
 class FPS
 {
 public:
@@ -21,17 +24,5 @@ private:
     unsigned int mFps;
     sf::Clock mClock;
 };
-
-void FPS::update()
-{
-    if(mClock.getElapsedTime().asSeconds() >= 1.f)
-    {
-        mFps = mFrame;
-        mFrame = 0;
-        mClock.restart();
-    }
-
-    ++mFrame;
-}
 
 #endif // FPS_HPP

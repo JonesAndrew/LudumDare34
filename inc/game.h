@@ -11,6 +11,7 @@
 
 #include "scene.h"
 #include "actor.h"
+#include "Player.h"
 #include <TGUI/TGUI.hpp>
 #include <SFML/Network.hpp>
 #include "fps.hpp"
@@ -18,6 +19,8 @@
 class Game : public Scene {
     std::vector<std::shared_ptr<Actor>> actors;
     FPS fps;
+    std::shared_ptr<Player> player;
+    std::vector<std::shared_ptr<Planet>> planets;
 public:
     virtual void draw(sf::RenderWindow *window);
     virtual void setupScene(sf::RenderWindow *window);

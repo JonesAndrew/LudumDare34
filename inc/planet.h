@@ -8,6 +8,7 @@ class Planet : public Actor {
 public:
     Planet();
     virtual void draw(sf::RenderTarget &target, sf::RenderStates) const;
+    int getRadius();
 };
 
 #endif
