@@ -49,14 +49,12 @@ void Director::startWithScene(Scene *scene) {
 
             time_acc += time_delta;
 
-            if (time_acc.asMilliseconds() >= 1000.0/60.0) {
+            if (time_acc.asMilliseconds() >= 1000.0/500.0) {
                 running = currentScene->tick(getWindow());
 
                 redraw = true;
 
-                time_acc = sf::milliseconds(time_acc.asMilliseconds()-1000.0/60);
-            } else {
-                sf::sleep(time_acc-sf::milliseconds(2));
+                time_acc = sf::milliseconds(time_acc.asMilliseconds()-1000.0/500);
             }
 
             sf::Event event;

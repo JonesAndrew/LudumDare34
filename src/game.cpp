@@ -7,6 +7,7 @@
 //
 
 #include "game.h"
+#include "planet.h"
 #include "textureLoader.h"
 #ifdef _WIN32
 #else
@@ -14,16 +15,23 @@
 #endif
 
 void Game::setupScene(sf::RenderWindow *window) {
-
+    actors.push_back(std::make_shared<Planet>());
 }
 
 void Game::draw(sf::RenderWindow *window) {
-    window->draw(a);
+    for (int i=0; i<actors.size(); i++) {
+        window->draw(*actors[i]);
+    }
 }
 
 void Game::handleEvent(sf::Event event, sf::RenderWindow *window) {
 }
 
 bool Game::tick(sf::RenderWindow *window) {
+    for (int i=0; i<actors.size(); i++) {
+        actors[i]->update();
+    }
+    fps.update();
+    std::cout << "fps:" << fps.getFPS() << std::endl;
     return true;
 }

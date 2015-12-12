@@ -17,3 +17,7 @@ void Actor::setPos(sf::Vector2f p) {
 sf::Vector2f Actor::getPos() {
     return pos;
 }
+
+void Actor::update() {
+    setPos(pos+velocity);
+}

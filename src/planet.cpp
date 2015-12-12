@@ -1,0 +1,14 @@
+#include "planet.h"
+
+Planet::Planet() {
+    sprite = TextureLoader::getInstance()->getSprite("test.png");
+    radius = 10;
+    velocity = sf::Vector2f(5,4);
+}
+
+void Planet::draw(sf::RenderTarget &target, sf::RenderStates) const {
+    //target.draw(sprite);
+    sf::CircleShape shape(radius);
+    shape.setPosition(pos);
+    target.draw(shape);
+}
