@@ -12,12 +12,14 @@ protected:
     AnimatedSprite sprite;
     sf::Vector2f velocity;
 public:
+    bool dead;
     Actor();
     virtual void draw(sf::RenderTarget &target, sf::RenderStates) const;
     void setPos(sf::Vector2f);
     sf::Vector2f getPos();
     virtual void update();
     void setVelocity(sf::Vector2f);
+    sf::Vector2f getVelocity();
 };
 
 #endif

@@ -31,7 +31,7 @@ private:
 public:
 
     static TextureLoader *getInstance();
-    sf::Sprite getSprite(std::string file);
+    sf::Sprite getSprite(std::string file,bool repeat=false);
     Animation getAnim(std::string file);
 };
 

@@ -24,3 +24,7 @@ void Actor::update() {
 void Actor::setVelocity(sf::Vector2f a) {
     velocity = a;
 }
+
+sf::Vector2f Actor::getVelocity() {
+    return velocity;
+}

@@ -17,17 +17,21 @@
 #include "fps.hpp"
 
 class Game : public Scene {
-    sf::View view;
+    sf::Sprite background;
+    sf::View view,view2;
     std::vector<std::shared_ptr<Actor>> actors;
     FPS fps;
     std::shared_ptr<Player> player;
     std::vector<std::shared_ptr<Planet>> planets;
     bool pressed;
+    float shake;
 public:
     virtual void draw(sf::RenderWindow *window);
     virtual void setupScene(sf::RenderWindow *window);
     virtual bool tick(sf::RenderWindow *window);
     virtual void handleEvent(sf::Event event, sf::RenderWindow *window);
+    void makePlanet();
+    void setShake(float s);
 };
 
 #endif /* defined(__Ludum_Dare__Game__) */

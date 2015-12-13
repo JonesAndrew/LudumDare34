@@ -22,7 +22,7 @@ TextureLoader *TextureLoader::getInstance() {
     return instance;
 }
 
-sf::Sprite TextureLoader::getSprite(std::string file) {
+sf::Sprite TextureLoader::getSprite(std::string file, bool repeat) {
     Texture *tex = textures[file];
 
     if (tex == NULL) {
@@ -33,6 +33,7 @@ sf::Sprite TextureLoader::getSprite(std::string file) {
 #else
         tex->tex.loadFromFile(resourcePath()+file);
 #endif
+        tex->tex.setRepeated(repeat);
         textures[file] = tex;
     }
 
