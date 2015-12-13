@@ -11,6 +11,7 @@
 
 #include <iostream>
 #include <SFML/Graphics.hpp>
+#include "AnimatedSprite.hpp"
 
 struct Texture {
     sf::Texture tex;
@@ -31,6 +32,7 @@ public:
 
     static TextureLoader *getInstance();
     sf::Sprite getSprite(std::string file);
+    Animation getAnim(std::string file);
 };
 
 #endif /* defined(__GameClient__TextureLoader__) */

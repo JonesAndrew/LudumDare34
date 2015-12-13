@@ -16,9 +16,9 @@ Director *Director::getInstance() {
 }
 
 void Director::initialize() {
-    window.create(sf::VideoMode(800, 600), "Strat");
+    window.create(sf::VideoMode(1280, 720), "Strat");
     window.setVerticalSyncEnabled(true);
-
+    window.setFramerateLimit(60);
     timer.restart();
 }
 

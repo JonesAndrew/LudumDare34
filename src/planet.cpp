@@ -1,9 +1,9 @@
 #include "planet.h"
 
 Planet::Planet() {
-    sprite = TextureLoader::getInstance()->getSprite("test.png");
-    radius = 10;
-    velocity = sf::Vector2f(0.4,0.67);
+    radius = 50;
+    velocity = sf::Vector2f(0.2,0.37);
+    mass = 60;
 }
 
 void Planet::draw(sf::RenderTarget &target, sf::RenderStates) const {

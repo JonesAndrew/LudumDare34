@@ -2,7 +2,6 @@
 
 Actor::Actor() {
     std::cout<<"test\n";
-    sprite = TextureLoader::getInstance()->getSprite("test.png");
 }
 
 void Actor::draw(sf::RenderTarget &target, sf::RenderStates) const {
@@ -20,4 +19,8 @@ sf::Vector2f Actor::getPos() {
 
 void Actor::update() {
     setPos(pos+velocity);
+}
+
+void Actor::setVelocity(sf::Vector2f a) {
+    velocity = a;
 }

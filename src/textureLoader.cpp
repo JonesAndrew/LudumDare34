@@ -40,3 +40,21 @@ sf::Sprite TextureLoader::getSprite(std::string file) {
     sprite.setTexture(tex->tex);
     return sprite;
 }
+
+Animation TextureLoader::getAnim(std::string file) {
+    Texture *tex = textures[file];
+
+    if (tex == NULL) {
+        tex = new Texture();
+#ifdef _WIN32
+        tex->tex.loadFromFile("../res/"+file);
+        std::cout<<"../res/"+file<<"\n";
+#else
+        tex->tex.loadFromFile(resourcePath()+file);
+#endif
+        textures[file] = tex;
+    }
+    Animation anim;
+    anim.setSpriteSheet(tex->tex);
+    return anim;
+}

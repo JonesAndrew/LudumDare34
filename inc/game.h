@@ -17,10 +17,12 @@
 #include "fps.hpp"
 
 class Game : public Scene {
+    sf::View view;
     std::vector<std::shared_ptr<Actor>> actors;
     FPS fps;
     std::shared_ptr<Player> player;
     std::vector<std::shared_ptr<Planet>> planets;
+    bool pressed;
 public:
     virtual void draw(sf::RenderWindow *window);
     virtual void setupScene(sf::RenderWindow *window);

@@ -5,6 +5,7 @@
 
 class Planet : public Actor {
     int radius;
+    int mass;
 public:
     Planet();
     virtual void draw(sf::RenderTarget &target, sf::RenderStates) const;
