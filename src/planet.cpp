@@ -8,10 +8,6 @@ Planet::Planet() {
 }
 
 void Planet::draw(sf::RenderTarget &target, sf::RenderStates) const {
-    sf::CircleShape shape(radius);
-    shape.setOrigin(radius,radius);
-    shape.setPosition(pos);
-    target.draw(shape);
     target.draw(sprite);
 }
 
@@ -31,9 +27,25 @@ void Planet::setRadius(int r) {
     radius = r;
 }
 
+void Planet::update() {
+    Actor::update();
+    if (pos.x > 14500 || pos.x < -14500 || pos.y > 14500 || pos.y < -14500) {
+        dead = true;
+    }
+}
+
 void Planet::setSprite(std::string file, int size) {
+    if (file == "HomePlanet.png") {
+        home = true;
+    }
     anim = TextureLoader::getInstance()->getAnim(file);
     anim.addFrame(sf::IntRect(0, 0, size-1, size-1));
     sprite.setOrigin(size/2,size/2);
     sprite.play(anim);
+}
+
+void Planet::setVelocity(sf::Vector2f a) {
+    if (home == false) {
+        velocity = a;
+    }
 }

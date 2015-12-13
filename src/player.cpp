@@ -30,22 +30,26 @@ void Player::update() {
     oldDelay = delay;
     freeze--;
     if (freeze == 0) {
-        if (p->getMass() < 50) {
+        if (p->getMass() < 35) {
             p->dead = true;
-            game->setShake(10);
         } else {
             p->setVelocity(sf::Vector2f(0,-45.0*sin(angle*PI/180)/p->getMass())+sf::Vector2f(-45.0*cos(angle*PI/180)/p->getMass(),0));
         }
+        game->setShake(10);
         p = nullptr;
         velocity = sf::Vector2f(0,4.5*sin(angle*PI/180))+sf::Vector2f(4.5*cos(angle*PI/180),0);
+        extra.setPosition(pos);
+        extra.play(explosion);
     }
     if (p == nullptr) {
         Actor::update();
     } else {
         setPos(p->getPos()+sf::Vector2f(0,p->getRadius()*sin(angle*PI/180))+
         sf::Vector2f(p->getRadius()*cos(angle*PI/180),0));
+        dj = true;
     }
     sprite.update(sf::seconds(1.0/60.0));
+    extra.update(sf::seconds(1.0/60.0));
 }
 
 Player::Player() {
@@ -70,6 +74,13 @@ Player::Player() {
     fly.addFrame(sf::IntRect(72+96, 24, 24, 24));
     fly.addFrame(sf::IntRect(0, 48, 24, 24));
     fly.addFrame(sf::IntRect(24, 48, 24, 24));
+    explosion = TextureLoader::getInstance()->getAnim("ExplosionSheet.png");
+    explosion.addFrame(sf::IntRect(0, 0, 72, 72));
+    explosion.addFrame(sf::IntRect(72, 0, 72, 72));
+    explosion.addFrame(sf::IntRect(144, 0, 72, 72));
+    explosion.addFrame(sf::IntRect(216, 0, 72, 72));
+    extra.setOrigin(36,72);
+    extra.setLooped(false);
     sprite.setOrigin(12,24);
     setAngle(90);
     delay = 0;
@@ -81,6 +92,7 @@ Player::Player() {
 void Player::setAngle(float a) {
     angle = a;
     sprite.setRotation(angle+90);
+    extra.setRotation(angle+90);
 }
 
 float Player::getAngle() {
@@ -91,6 +103,10 @@ void Player::jump() {
     if (p != nullptr && freeze <= 0) {
         sprite.play(crouch);
         freeze = 24;
+    } else if (p == nullptr && dj) {
+        velocity.x = -velocity.x;
+        velocity.y = -velocity.y;
+        dj = false;
     }
 }
 
@@ -126,4 +142,9 @@ void Player::setGame(Game* g) {
 
 int Player::getFreeze() {
     return freeze;
+}
+
+void Player::draw(sf::RenderTarget &target, sf::RenderStates) const {
+    target.draw(sprite);
+    target.draw(extra);
 }

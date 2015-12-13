@@ -25,13 +25,15 @@ class Game : public Scene {
     std::vector<std::shared_ptr<Planet>> planets;
     bool pressed;
     float shake;
+    sf::Music music;
 public:
     virtual void draw(sf::RenderWindow *window);
     virtual void setupScene(sf::RenderWindow *window);
     virtual bool tick(sf::RenderWindow *window);
     virtual void handleEvent(sf::Event event, sf::RenderWindow *window);
-    void makePlanet();
+    void makePlanet(int);
     void setShake(float s);
+    bool pause;
 };
 
 #endif /* defined(__Ludum_Dare__Game__) */

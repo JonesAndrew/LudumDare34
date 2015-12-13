@@ -31,7 +31,7 @@ float distance(sf::Vector2f a, sf::Vector2f b) {
     return sqrt(c.x*c.x+c.y*c.y);
 }
 
-void Game::makePlanet() {
+void Game::makePlanet(int dist) {
     std::shared_ptr<Planet> p = std::make_shared<Planet>();
     int r = rand()%40+25;
     if (r <= 50) {
@@ -43,8 +43,10 @@ void Game::makePlanet() {
     }
     p->setRadius(r);
     p->setMass(r);
-    p->setPos(sf::Vector2f(rand()%(2048*2)-2048,rand()%(2048*2)-2048));
-    p->setVelocity(sf::Vector2f(rand()%300/100.0-1.5,rand()%300/100.0-1.5));
+
+    float angle = rand()%360;
+
+    p->setPos(sf::Vector2f(sf::Vector2f(0,dist*sin(angle*PI/180))+sf::Vector2f(dist*cos(angle*PI/180),0)));
 
     for (int i=0;i<planets.size()-1; i++) {
         if(distance(p->getPos(),planets[i]->getPos()) < planets[i]->getRadius()+p->getRadius()) {
@@ -52,11 +54,20 @@ void Game::makePlanet() {
         }
     }
 
+    sf::Vector2f c = p->getPos()-planets[0]->getPos();
+    angle = atan2 (c.y,c.x) * 180 / PI; //+ rand()%40/10.0-2.0;
+    float x=cos(angle*PI/180);
+    float y=sin(angle*PI/180);
+
+    p->setVelocity(sf::Vector2f(x*((rand()%15/10)-0.75),y*((rand()%15/10)-0.75)));
+
     planets.push_back(p);
     actors.push_back(planets.back());
 }
 
 void Game::setupScene(sf::RenderWindow *window) {
+    srand(time(0));
+
     background = TextureLoader::getInstance()->getSprite("Background.png",true);
     background.setTextureRect(sf::IntRect(0,0,2048*16,2048*16));
     background.setPosition(-2048*8,-2048*8);
@@ -73,8 +84,8 @@ void Game::setupScene(sf::RenderWindow *window) {
 
     player->setPlanet(planets.back());
 
-    for (int i=0; i<80; i++) {
-        makePlanet();
+    for (int i=0; i<200; i++) {
+        makePlanet(200+rand()%400+70*i);
     }
 
     view.reset(sf::FloatRect(1280, 720, 1280/2, 720/2));
@@ -83,6 +94,11 @@ void Game::setupScene(sf::RenderWindow *window) {
 
     pressed = false;
     shake = 0;
+    pause = false;
+
+    music.openFromFile("../res/song.wav");
+    music.setLoop(true);
+    music.play();
 }
 
 void Game::draw(sf::RenderWindow *window) {
@@ -106,95 +122,105 @@ void Game::handleEvent(sf::Event event, sf::RenderWindow *window) {
 }
 
 bool Game::tick(sf::RenderWindow *window) {
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q) && sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
-        if (pressed == false) {
-            player->jump();
-            pressed = true;
+    if (!pause) {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q) && sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
+            if (pressed == false) {
+                player->jump();
+                pressed = true;
+            }
+        } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) {
+            player->moveLeft();
+            pressed = false;
+        } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
+            player->moveRight();
+            pressed = false;
+        } else {
+            pressed = false;
         }
-    } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) {
-        player->moveLeft();
-        pressed = false;
-    } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
-        player->moveRight();
-        pressed = false;
-    } else {
-        pressed = false;
-    }
-    for (int i=1; i<actors.size(); i++) {
-        actors[i]->update();
-        if (actors[i]->dead) {
-            actors.erase(actors.begin()+i);
-            for (int p=0;p<planets.size();p++) {
-                if (planets[p]->dead) {
-                    planets.erase(planets.begin()+p);
-                    break;
+        for (int i=1; i<actors.size(); i++) {
+            actors[i]->update();
+            if (actors[i]->dead) {
+                actors.erase(actors.begin()+i);
+                for (int p=0;p<planets.size();p++) {
+                    if (planets[p]->dead) {
+                        planets.erase(planets.begin()+p);
+                        break;
+                    }
+                }
+                i--;
+            }
+        }
+        actors[0]->update();
+
+        while (planets.size() < 200) {
+            makePlanet(200+rand()%400+70*100);
+        }
+
+        int dist = 2;
+        if (player->getFreeze() < -6 && player->getPlanet() == nullptr) {
+            dist = 6;
+        }
+
+        for (int i=0;i<planets.size(); i++) {
+            if(player->getPlanet() == nullptr && distance(player->getPos(),planets[i]->getPos()) < planets[i]->getRadius()+dist) {
+                sf::Vector2f c = player->getPos()-planets[i]->getPos();
+                float result = atan2 (c.y,c.x) * 180 / PI;
+                player->setAngle(result);
+                player->setPlanet(planets[i]);
+            } else if (player->getPlanet() != nullptr && player->getPlanet() != planets[i] && distance(player->getPos(),planets[i]->getPos()) < planets[i]->getRadius()+12) {
+                pause = true;
+            }
+        }
+
+        for (int i=0;i<planets.size(); i++) {
+            for (int t=i+1;t<planets.size(); t++) {
+                if(distance(planets[t]->getPos(),planets[i]->getPos()) < planets[i]->getRadius()+planets[t]->getRadius()) {
+                    if (i == 0) {
+                        planets[t]->dead = true;
+                    } else {
+                        sf::Vector2f axis1,axis2;
+                        sf::Vector2f vel1 = planets[i]->getVelocity();
+                        sf::Vector2f vel2 = planets[t]->getVelocity();
+                        sf::Vector2f pos1 = planets[i]->getPos();
+                        sf::Vector2f pos2 = planets[t]->getPos();
+                        double m1 = planets[i]->getMass();
+                        double m2 = planets[t]->getMass();
+
+                        double  m21,dvx2,a,x21,y21,vx21,vy21,fy21,sign,vx_cm,vy_cm;
+
+                        m21=m2/m1;
+                        x21=pos2.x-pos1.x;
+                        y21=pos2.y-pos1.y;
+                        vx21=vel2.x-vel1.x;
+                        vy21=vel2.y-vel1.y;
+
+                        a=y21/x21;
+                        dvx2= -2*(vx21 +a*vy21)/((1+a*a)*(1+m21)) ;
+                        vel2.x=vel2.x+dvx2;
+                        vel2.y=vel2.y+a*dvx2;
+                        vel1.x=vel1.x-m21*dvx2;
+                        vel1.y=vel1.y-a*m21*dvx2;
+
+                        planets[i]->setVelocity(vel1);
+                        planets[t]->setVelocity(vel2);
+                    }
                 }
             }
-            i--;
         }
-    }
-    actors[0]->update();
 
-    int dist = 2;
-    if (player->getFreeze() < -6 && player->getPlanet() == nullptr) {
-        dist = 6;
-    }
-
-    for (int i=0;i<planets.size(); i++) {
-        if(player->getPlanet() == nullptr && distance(player->getPos(),planets[i]->getPos()) < planets[i]->getRadius()+dist) {
-            sf::Vector2f c = player->getPos()-planets[i]->getPos();
-            float result = atan2 (c.y,c.x) * 180 / PI;
-            player->setAngle(result);
-            player->setPlanet(planets[i]);
+        float chase=0.075;
+        view.setCenter(view.getCenter().x+(player->getPos().x-view.getCenter().x)*chase,view.getCenter().y+(player->getPos().y-view.getCenter().y)*chase);
+        if (shake > 0) {
+            view2.setCenter(view.getCenter());
+            int angle = rand()%360;
+            float x=cos(angle*PI/180)*shake;
+            float y=sin(angle*PI/180)*shake;
+            view2.move(x,y);
+            shake-=0.4;
+            std::cout<<"angle: "<<angle<<"\n";
+        } else {
+            shake = 0;
         }
-    }
-
-    for (int i=0;i<planets.size(); i++) {
-        for (int t=i+1;t<planets.size(); t++) {
-            if(distance(planets[t]->getPos(),planets[i]->getPos()) < planets[i]->getRadius()+planets[t]->getRadius()) {
-                sf::Vector2f axis1,axis2;
-                sf::Vector2f vel1 = planets[i]->getVelocity();
-                sf::Vector2f vel2 = planets[t]->getVelocity();
-                sf::Vector2f pos1 = planets[i]->getPos();
-                sf::Vector2f pos2 = planets[t]->getPos();
-                double m1 = planets[i]->getMass();
-                double m2 = planets[t]->getMass();
-
-                double  m21,dvx2,a,x21,y21,vx21,vy21,fy21,sign,vx_cm,vy_cm;
-
-                m21=m2/m1;
-                x21=pos2.x-pos1.x;
-                y21=pos2.y-pos1.y;
-                vx21=vel2.x-vel1.x;
-                vy21=vel2.y-vel1.y;
-
-                a=y21/x21;
-                dvx2= -2*(vx21 +a*vy21)/((1+a*a)*(1+m21)) ;
-                vel2.x=vel2.x+dvx2;
-                vel2.y=vel2.y+a*dvx2;
-                vel1.x=vel1.x-m21*dvx2;
-                vel1.y=vel1.y-a*m21*dvx2;
-
-                planets[i]->setVelocity(vel1);
-                planets[t]->setVelocity(vel2);
-            }
-        }
-    }
-
-
-
-    float chase=0.075;//distance(player->getPos(),view.getCenter());
-    view.setCenter(view.getCenter().x+(player->getPos().x-view.getCenter().x)*chase,view.getCenter().y+(player->getPos().y-view.getCenter().y)*chase);
-    if (shake > 0) {
-        view2.setCenter(view.getCenter());
-        int angle = rand()%360;
-        float x=cos(angle*PI/180)*shake;
-        float y=sin(angle*PI/180)*shake;
-        view2.move(x,y);
-        shake-=0.4;
-        std::cout<<"angle: "<<angle<<"\n";
-    } else {
-        shake = 0;
     }
     fps.update();
     return true;

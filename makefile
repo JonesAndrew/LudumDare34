@@ -4,7 +4,7 @@ CPPFLAGS=-I$(IDIR) -std=c++0x -Wfatal-errors -g
 
 ODIR =$(shell pwd)/src
 
-LIBS=-lsfml-graphics -lsfml-window -lsfml-system
+LIBS=-lsfml-graphics -lsfml-audio -lsfml-window -lsfml-system
 
 _DEPS = director.h game.h scene.h textureLoader.h actor.h planet.h fps.hpp player.h AnimatedSprite.hpp Animation.hpp
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))

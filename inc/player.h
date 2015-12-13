@@ -11,8 +11,10 @@ class Player : public Actor {
     float angle;
     std::shared_ptr<Planet> p;
     int delay,oldDelay,freeze;
-    Animation anim,walk,crouch,fly;
+    Animation anim,walk,crouch,fly,explosion;
+    AnimatedSprite extra;
     Game *game;
+    bool dj;
 public:
     Player();
     void setPlanet(std::shared_ptr<Planet>);
@@ -25,6 +27,7 @@ public:
     void moveRight();
     void setGame(Game*);
     int getFreeze();
+    virtual void draw(sf::RenderTarget &target, sf::RenderStates) const;
 };
 
 #endif
