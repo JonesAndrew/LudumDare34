@@ -74,6 +74,10 @@ void AnimatedSprite::setLooped(bool looped)
     m_isLooped = looped;
 }
 
+bool AnimatedSprite::getLooped() {
+    return m_isLooped;
+}
+
 void AnimatedSprite::setColor(const sf::Color& color)
 {
     // Update the vertices' color

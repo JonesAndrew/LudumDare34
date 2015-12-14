@@ -6,16 +6,19 @@
 class Planet : public Actor {
     int radius;
     int mass;
-    Animation anim;
-    bool home;
+    std::vector<Animation> anim;
+    std::string file;
 public:
+    bool home;
     Planet();
+    ~Planet();
     virtual void draw(sf::RenderTarget &target, sf::RenderStates) const;
     int getRadius();
     void setRadius(int);
     void setMass(int);
     int getMass();
     void setSprite(std::string,int);
+    std::string getFile();
     virtual void setVelocity(sf::Vector2f);
     virtual void update();
 };

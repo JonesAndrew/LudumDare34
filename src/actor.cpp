@@ -1,7 +1,7 @@
 #include "actor.h"
+#include "game.h"
 
 Actor::Actor() {
-    std::cout<<"test\n";
 }
 
 void Actor::draw(sf::RenderTarget &target, sf::RenderStates) const {
@@ -18,7 +18,11 @@ sf::Vector2f Actor::getPos() {
 }
 
 void Actor::update() {
-    setPos(pos+velocity);
+    if (deadCount > 0) {
+        deadCount--;
+    } else {
+        setPos(pos+velocity);
+    }
 }
 
 void Actor::setVelocity(sf::Vector2f a) {
@@ -27,4 +31,8 @@ void Actor::setVelocity(sf::Vector2f a) {
 
 sf::Vector2f Actor::getVelocity() {
     return velocity;
+}
+
+void Actor::setGame(Game* g) {
+    game = g;
 }
