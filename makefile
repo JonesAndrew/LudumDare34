@@ -6,10 +6,10 @@ ODIR =$(shell pwd)/src
 
 LIBS=-lsfml-graphics -lsfml-audio -lsfml-window -lsfml-system
 
-_DEPS = director.h game.h scene.h textureLoader.h actor.h planet.h fps.hpp player.h AnimatedSprite.hpp Animation.hpp sound.h
+_DEPS = director.h game.h scene.h textureLoader.h actor.h fps.hpp player.h AnimatedSprite.hpp Animation.hpp sound.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = main.o director.o game.o scene.o textureLoader.o actor.o planet.o fps.o player.o AnimatedSprite.o Animation.o sound.o
+_OBJ = main.o director.o game.o scene.o textureLoader.o actor.o fps.o player.o AnimatedSprite.o Animation.o sound.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 $(ODIR)/%.o: %.cpp $(DEPS)

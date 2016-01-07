@@ -11,7 +11,7 @@ class Game;
 class Actor : public sf::Drawable {
 protected:
     sf::Vector2f pos;
-    AnimatedSprite sprite;
+    //AnimatedSprite sprite;
     sf::Vector2f velocity;
     Game *game;
 public:
